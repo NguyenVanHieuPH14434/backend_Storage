@@ -1,3 +1,5 @@
+import { ShelfController } from './shelf/shelf.controller';
+import { ShelfModel } from './shelf/shelf.model';
 import { StorageController } from './storage/storage.controller';
 import { StorageModel } from './storage/storage.model';
 import { WarehouseController } from './warehouse/warehouse.controller';
@@ -11,6 +13,7 @@ import { ReadConfig } from './config';
 import { NewProducerAPI } from './producer/producer.api';
 import { NewWarehouseAPI } from './warehouse/warehouse.api';
 import { NewStorageAPI } from './storage/storage.api';
+import { NewShelfAPI } from './shelf/shelf.api';
 
 export async function main() {
 
@@ -36,6 +39,11 @@ await storageModel.init();
 const storageController = new StorageController(storageModel);
 await storageController.init();
 
+const shelfModel = new ShelfModel(database);
+await shelfModel.init();
+const shelfController = new ShelfController(shelfModel);
+await shelfController.init();
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -46,14 +54,14 @@ app.disable("x-powered-by")
 app.get('/', (req, res)=>{
     res.send('â');
 })
-// app.use('/api', NewOrgAPI(orgBLL));
+
 app.use('/api/producer', NewProducerAPI(producerController));
-app.use('/api/warehouse', NewWarehouseAPI(warehouseController));
+app.use('/api/consignment', NewWarehouseAPI(warehouseController));
 app.use('/api/storage', NewStorageAPI(storageController));
+app.use('/api/shelf', NewShelfAPI(shelfController));
 
 app.listen(PORT, ()=>{
     console.log('Server running!');
-    
 })
 }
 
