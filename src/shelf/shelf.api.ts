@@ -29,6 +29,11 @@ export function NewShelfAPI(shelfController: ShelfController){
         res.json(doc);
     });
 
+    router.get('/edit/:_id', async(req, res)=>{
+        const doc = await shelfController.GetShelf(req.params._id);
+        return doc;
+    });
+
     router.delete('/delete/:_id', async(req, res)=>{
         const doc = await shelfController.DeleteShelf(req.params._id);
         res.json({status:200, message: "Delete success", data:doc});

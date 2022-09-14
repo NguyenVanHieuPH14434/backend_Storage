@@ -32,6 +32,12 @@ export function NewProducerAPI(producerController: ProducerController){
         res.json(doc);
     });
 
+    router.get('/edit/:_id', async(req, res)=>{
+        const doc = await producerController.GetProducer(req.params._id);
+        return doc;
+    });
+
+
     router.delete('/delete/:_id', async(req, res)=>{
         const doc = await producerController.DeleteProducer(req.params._id);
         res.json({status: 200, message: 'Delete success!', data: doc});

@@ -41,6 +41,11 @@ export function NewStorageAPI (storageController : StorageController) {
         res.json(doc);
     });
 
+    router.get('/edit/:_id', async(req, res)=>{
+        const doc = await storageController.GetStorage(req.params._id);
+        return doc;
+    });
+
     router.delete('/delete/:_id', async(req, res) =>{
         const doc = await storageController.DeleteStorage(req.params._id);
         res.json({status: 200, message: 'Delete success', data: doc});

@@ -31,6 +31,11 @@ export function NewWarehouseAPI (warehouseController: WarehouseController){
         res.json(doc);
     });
 
+    router.get('/edit/:_id', async(req, res)=>{
+        const doc = await warehouseController.GetWarehouse(req.params._id);
+        return doc;
+    });
+
     router.delete('/delete/:_id', async(req, res)=>{
         const doc = await warehouseController.DeleteWarehouse(req.params._id);
         res.json({status: 200, message: "Delete success!", data: doc});
