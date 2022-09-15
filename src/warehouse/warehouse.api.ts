@@ -7,11 +7,23 @@ export function NewWarehouseAPI (warehouseController: WarehouseController){
 
     router.get('/list', async(req, res)=>{
         let filter = {};
-        const perPage = 2;
+        const perPage = 10;
         const pages = req.query.page || 1;
         if(req.query.product_name){
             const product_name = req.query.product_name;
             filter = {product_name};
+        }
+        if(req.query.producer_name){
+            const producer_name = req.query.producer_name;
+            filter = {producer_name};
+        }
+        if(req.query.lot_number){
+            const lot_number = req.query.lot_number;
+            filter = {lot_number};
+        }
+        if(req.query._id){
+            const _id = req.query._id;
+            filter = {_id};
         }
        
     
