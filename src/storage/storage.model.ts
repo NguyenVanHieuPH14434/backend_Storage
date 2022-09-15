@@ -10,7 +10,7 @@ export class StorageModel {
     private col_storage = this.db.collection('storage');
 
     async ListStorage (filter:any, perPage: number, page:number){
-        const docs = await this.col_storage.aggregate([{match:filter}]).skip((perPage * page) - perPage).limit(perPage).toArray();
+        const docs = await this.col_storage.aggregate([{$match:filter}]).skip((perPage * page) - perPage).limit(perPage).toArray();
         const count = await this.col_storage.find().count();
         const totalPage = Math.ceil(count/perPage);
         return {docs:docs, count:count, totalPage:totalPage};

@@ -9,12 +9,11 @@ export class ProducerModel{
     private col_producer = this.db.collection('producer');
 
     async ListProducer (filter:any, perPage:number, page:number){
-        const docs = await this.col_producer.aggregate([{match:filter}]).skip((page * perPage)-perPage).limit(perPage).toArray();
+        const docs = await this.col_producer.aggregate([{$match:filter}]).skip((page * perPage)-perPage).limit(perPage).toArray();
         const count = await this.col_producer.find().count();
         const totalPage = Math.ceil(count/perPage);
         return {docs:docs, count:count, totalPage:totalPage};
     }
-
     async GetProducer (_id: string) {
         const doc = await this.col_producer.findOne({_id:_id});
         return doc;
