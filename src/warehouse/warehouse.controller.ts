@@ -19,8 +19,7 @@ export class WarehouseController{
 
     async CreateWarehouse (params: WarehouseSchema.CreateWarehouseParams){
         const now = dayjs();
-
-          const nowFormat = now.format('DD/MM/YYYY');
+        const nowFormat = now.format('DD/MM/YYYY HH:mm:ss');
 
         const warehouse : WarehouseSchema.Warehouse = {
             _id: WarehouseSchema.Generator.NewWarehouseId(),
@@ -38,7 +37,8 @@ export class WarehouseController{
     async UpdateWarehouse (_id:string, params:WarehouseSchema.UpdateWarehouseParams){
         const warehouse = {...params};
         const now = dayjs();
-          const nowFormat = now.format('DD/MM/YYYY');
+       
+        const nowFormat = now.format('DD/MM/YYYY HH:mm:ss');
         warehouse.utime = nowFormat;
         await this.model.UpdateWarehouse(_id, warehouse);
         return warehouse;

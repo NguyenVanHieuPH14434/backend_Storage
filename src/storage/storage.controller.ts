@@ -19,8 +19,7 @@ export class StorageController {
 
     async CreateStorage (params : StorageSchema.CreateStorageParams){
         const now = dayjs();
-
-          const nowFormat = now.format('DD/MM/YYYY');
+        const nowFormat = now.format('DD/MM/YYYY HH:mm:ss');
 
         const data = params.product_name + '|' + params.lot_number + '|' + params.quantity + '|' + params.shelf_number + '|' + params.type + '|' + params.nsx + '|' + params.hsd; 
 
@@ -46,7 +45,8 @@ export class StorageController {
 
     async UpdateStorage (_id:string, params: StorageSchema.UpdateStorageParams){
         const now = dayjs();
-          const nowFormat = now.format('DD/MM/YYYY');
+        
+        const nowFormat = now.format('DD/MM/YYYY HH:mm:ss');
         const data = params.product_name + '|' + params.lot_number + '|' + params.quantity + '|' + params.shelf_number + '|' + params.type + '|' + params.nsx + '|' + params.hsd; 
        const qr_code = await QRCode.toDataURL(data);
        const storage = {...params};

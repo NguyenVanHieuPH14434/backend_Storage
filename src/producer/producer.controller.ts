@@ -18,8 +18,8 @@ export class ProducerController {
 
     async CreateProducer (params: ProducerSchema.CreateProducerParams){
         const now = dayjs();
-
-        const nowFormat = now.format('DD/MM/YYYY');
+      
+        const nowFormat = now.format('DD/MM/YYYY HH:mm:ss');
 
         const producer : ProducerSchema.Producer = {
             _id: ProducerSchema.Generator.NewProducerId(),
@@ -39,7 +39,7 @@ export class ProducerController {
         const producer = {...params};
         const now = dayjs();
 
-        const nowFormat = now.format('DD/MM/YYYY');
+        const nowFormat = now.format('DD/MM/YYYY HH:mm:ss');
         producer.utime = nowFormat;
         await this.model.UpdateProducer(_id, producer);
         return producer;     

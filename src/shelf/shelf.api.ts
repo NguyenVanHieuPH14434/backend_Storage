@@ -13,6 +13,10 @@ export function NewShelfAPI(shelfController: ShelfController){
             const shelf_name = req.query.shelf_name;
             filter = {shelf_name};
         }
+        if(req.query._id){
+            const _id = req.query._id;
+            filter = {_id};
+        }
         const docs = await shelfController.ListShelf(filter, perPages, +pages);
         res.json(docs);
     });

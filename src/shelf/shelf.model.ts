@@ -9,7 +9,7 @@ export class ShelfModel {
     private col_shelf = this.db.collection('shelf');
 
     async ListShelf (filter:any, perPage:number, page:number){
-        const docs = await this.col_shelf.find(filter).skip((perPage * page)- perPage).limit(perPage).toArray();
+        const docs = await this.col_shelf.aggregate([{match:filter}, {$sort:{ctime:1}}]).skip((perPage * page)- perPage).limit(perPage).toArray();
         const count = await this.col_shelf.find().count();
         const totalPage = Math.ceil(count/perPage);
         return {docs:docs, count:count, totalPage: totalPage};
