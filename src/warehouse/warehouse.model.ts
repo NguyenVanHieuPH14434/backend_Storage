@@ -9,7 +9,7 @@ export class WarehouseModel{
     private col_warehouse = this.db.collection('warehouse');
 
     async ListWarehouse (filter:any, perPage:number, page:number){
-        const docs = await this.col_warehouse.aggregate([{$match:filter}, {$sort:{ctime: 1}}]).skip((perPage * page) - perPage).limit(perPage).toArray();
+        const docs = await this.col_warehouse.aggregate([{$match:filter}, {$sort:{ctime: -1}}]).skip((perPage * page) - perPage).limit(perPage).toArray();
         const count = await this.col_warehouse.find().count();
         const totalPage = Math.ceil(count/perPage);
         return {docs:docs, count:count, totalPage:totalPage};
