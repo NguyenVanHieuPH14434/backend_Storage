@@ -7,8 +7,8 @@ export class ProducerController {
 
     async init(){}
 
-    async ListProducer (){
-        return this.model.ListProducer();
+    async ListProducer (filter:any, perPage:number, page:number){
+        return this.model.ListProducer(filter, perPage, page);
     }
 
     async GetProducer (_id :string){
@@ -19,7 +19,7 @@ export class ProducerController {
     async CreateProducer (params: ProducerSchema.CreateProducerParams){
         const now = dayjs();
 
-        const nowFormat = now.format('YYYY/MM/DD');
+        const nowFormat = now.format('DD/MM/YYYY');
 
         const producer : ProducerSchema.Producer = {
             _id: ProducerSchema.Generator.NewProducerId(),
@@ -39,7 +39,7 @@ export class ProducerController {
         const producer = {...params};
         const now = dayjs();
 
-        const nowFormat = now.format('YYYY/MM/DD');
+        const nowFormat = now.format('DD/MM/YYYY');
         producer.utime = nowFormat;
         await this.model.UpdateProducer(_id, producer);
         return producer;     

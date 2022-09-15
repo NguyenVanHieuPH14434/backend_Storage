@@ -6,7 +6,14 @@ export function NewStorageAPI (storageController : StorageController) {
     const router = express.Router();
 
     router.get('/list', async(req, res)=>{
-        const docs = await storageController.ListStorage();
+        let filter = {};
+        const perPages = 2;
+        const pages = req.query.page || 1;
+        if(req.query.product_name){
+            const product_name = req.query.product_name;
+            filter = {product_name};
+        }
+        const docs = await storageController.ListStorage(filter, perPages, +pages);
         res.json(docs);
     });
 
@@ -43,7 +50,7 @@ export function NewStorageAPI (storageController : StorageController) {
 
     router.get('/edit/:_id', async(req, res)=>{
         const doc = await storageController.GetStorage(req.params._id);
-        return doc;
+        res.json(doc);
     });
 
     router.delete('/delete/:_id', async(req, res) =>{

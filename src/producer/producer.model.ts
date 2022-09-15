@@ -8,9 +8,11 @@ export class ProducerModel{
 
     private col_producer = this.db.collection('producer');
 
-    async ListProducer (){
-        const docs = await this.col_producer.find().toArray();
-        return docs;
+    async ListProducer (filter:any, perPage:number, page:number){
+        const docs = await this.col_producer.find(filter).skip((page * perPage)-perPage).limit(perPage).toArray();
+        const count = await this.col_producer.find().count();
+        const totalPage = Math.ceil(count/perPage);
+        return {docs:docs, count:count, totalPage:totalPage};
     }
 
     async GetProducer (_id: string) {

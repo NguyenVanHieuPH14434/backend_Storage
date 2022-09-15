@@ -6,7 +6,14 @@ export function NewShelfAPI(shelfController: ShelfController){
     const router = express.Router();
 
     router.get('/list', async(req, res)=>{
-        const docs = await shelfController.ListShelf();
+        let filter = {};
+        const perPages = 2;
+        const pages = req.query.page || 1;
+        if(req.query.shelf_name){
+            const shelf_name = req.query.shelf_name;
+            filter = {shelf_name};
+        }
+        const docs = await shelfController.ListShelf(filter, perPages, +pages);
         res.json(docs);
     });
 
@@ -31,7 +38,7 @@ export function NewShelfAPI(shelfController: ShelfController){
 
     router.get('/edit/:_id', async(req, res)=>{
         const doc = await shelfController.GetShelf(req.params._id);
-        return doc;
+        res.json(doc);
     });
 
     router.delete('/delete/:_id', async(req, res)=>{

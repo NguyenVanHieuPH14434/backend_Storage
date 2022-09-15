@@ -6,7 +6,14 @@ export function NewProducerAPI(producerController: ProducerController){
     const router = express.Router();
 
     router.get('/list', async(req, res)=>{
-        const docs = await producerController.ListProducer();
+        let filter = {};
+        const perPage = 10;
+        const pages = req.query.page || 1;
+        if(req.query.producer_name){
+            const producer_name = req.query.producer_name;
+            filter = {producer_name};
+        }
+        const docs = await producerController.ListProducer(filter, perPage, +pages);
         res.json(docs);
     });
 
@@ -34,7 +41,7 @@ export function NewProducerAPI(producerController: ProducerController){
 
     router.get('/edit/:_id', async(req, res)=>{
         const doc = await producerController.GetProducer(req.params._id);
-        return doc;
+        res.json(doc);
     });
 
 

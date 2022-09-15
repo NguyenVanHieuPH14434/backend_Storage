@@ -7,8 +7,8 @@ export class ShelfController {
 
     async init() {}
 
-    async ListShelf () {
-        return this.model.ListShelf();
+    async ListShelf (filter:any, perPage:number, page:number) {
+        return this.model.ListShelf(filter, perPage, page);
     }
 
     async GetShelf(_id:string){
@@ -18,7 +18,7 @@ export class ShelfController {
 
     async CreateShelf (params: ShelfSchema.CreateShelfParams){
         const now = dayjs();
-        const nowFormat = now.format('YYYY/MM/DD');
+           const nowFormat = now.format('DD/MM/YYYY');
         const shelf : ShelfSchema.Shelf = {
             _id: ShelfSchema.Generate.NewShelfId(),
             shelf_name: params.shelf_name,
@@ -33,7 +33,7 @@ export class ShelfController {
 
     async UpdateShelf (_id:string, parmas: ShelfSchema.UpdateShelfParams){
         const now = dayjs();
-        const nowFormat = now.format('YYYY/MM/DD');
+           const nowFormat = now.format('DD/MM/YYYY');
         const shelf = {...parmas};
         shelf.utime = nowFormat;
         await this.model.UpdateShelf(_id, shelf);

@@ -6,7 +6,14 @@ export function NewWarehouseAPI (warehouseController: WarehouseController){
     const router = express.Router();
 
     router.get('/list', async(req, res)=>{
-        const docs = await warehouseController.ListWarehouse();
+        let filter = {};
+        const perPage = 2;
+        const pages = req.query.page || 1;
+        if(req.query.product_name){
+            const product_name = req.query.product_name;
+            filter = {product_name};
+        }
+        const docs = await warehouseController.ListWarehouse(filter, perPage, +pages);
         res.json(docs);
     });
 
@@ -33,7 +40,7 @@ export function NewWarehouseAPI (warehouseController: WarehouseController){
 
     router.get('/edit/:_id', async(req, res)=>{
         const doc = await warehouseController.GetWarehouse(req.params._id);
-        return doc;
+        res.json(doc);
     });
 
     router.delete('/delete/:_id', async(req, res)=>{

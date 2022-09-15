@@ -7,8 +7,9 @@ export class WarehouseController{
 
     async init(){}
 
-    async ListWarehouse(){
-        return this.model.ListWarehouse();
+    async ListWarehouse(filter:any, perPage:number, page: number){
+       
+        return this.model.ListWarehouse(filter, perPage, page);
     }
 
     async GetWarehouse (_id:string){
@@ -19,7 +20,7 @@ export class WarehouseController{
     async CreateWarehouse (params: WarehouseSchema.CreateWarehouseParams){
         const now = dayjs();
 
-        const nowFormat = now.format('YYYY/MM/DD');
+          const nowFormat = now.format('DD/MM/YYYY');
 
         const warehouse : WarehouseSchema.Warehouse = {
             _id: WarehouseSchema.Generator.NewWarehouseId(),
@@ -37,7 +38,7 @@ export class WarehouseController{
     async UpdateWarehouse (_id:string, params:WarehouseSchema.UpdateWarehouseParams){
         const warehouse = {...params};
         const now = dayjs();
-        const nowFormat = now.format('YYYY/MM/DD');
+          const nowFormat = now.format('DD/MM/YYYY');
         warehouse.utime = nowFormat;
         await this.model.UpdateWarehouse(_id, warehouse);
         return warehouse;
