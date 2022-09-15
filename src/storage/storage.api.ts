@@ -7,11 +7,31 @@ export function NewStorageAPI (storageController : StorageController) {
 
     router.get('/list', async(req, res)=>{
         let filter = {};
-        const perPages = 2;
+        const perPages = 10;
         const pages = req.query.page || 1;
         if(req.query.product_name){
             const product_name = req.query.product_name;
             filter = {product_name};
+        }
+        if(req.query.lot_number){
+            const lot_number = req.query.lot_number;
+            filter = {lot_number};
+        }
+        if(req.query.shelf_number){
+            const shelf_number = req.query.shelf_number;
+            filter = {shelf_number};
+        }
+        if(req.query.nsx){
+            const nsx = req.query.nsx;
+            filter = {nsx};
+        }
+        if(req.query.hsd){
+            const hsd = req.query.hsd;
+            filter = {hsd};
+        }
+        if(req.query._id){
+            const _id = req.query._id;
+            filter = {_id};
         }
        
         const docs = await storageController.ListStorage(filter, perPages, +pages);

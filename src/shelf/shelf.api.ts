@@ -7,11 +7,15 @@ export function NewShelfAPI(shelfController: ShelfController){
 
     router.get('/list', async(req, res)=>{
         let filter = {};
-        const perPages = 2;
+        const perPages = 10;
         const pages = req.query.page || 1;
         if(req.query.shelf_name){
             const shelf_name = req.query.shelf_name;
             filter = {shelf_name};
+        }
+        if(req.query._id){
+            const _id = req.query._id;
+            filter = {_id};
         }
        
         const docs = await shelfController.ListShelf(filter, perPages, +pages);
