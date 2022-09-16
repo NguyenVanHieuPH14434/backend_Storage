@@ -8,8 +8,8 @@ export class StorageController {
 
     async init() {}
 
-    async ListStorage (filter:any, perPage:number, page:number) {
-        return this.model.ListStorage(filter, perPage, page);
+    async ListStorage (filter:any) {
+        return this.model.ListStorage(filter);
     }
 
     async GetStorage (_id:string){
