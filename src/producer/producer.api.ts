@@ -13,6 +13,10 @@ export function NewProducerAPI(producerController: ProducerController){
             const producer_name = req.query.producer_name;
             filter = {producer_name};
         }
+        if(req.query._id){
+            const _id = req.query._id;
+            filter = {_id};
+        }
    
         const docs = await producerController.ListProducer(filter, perPage, +pages);
         res.json(docs);
