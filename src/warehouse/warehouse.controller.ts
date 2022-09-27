@@ -7,10 +7,26 @@ export class WarehouseController{
 
     async init(){}
 
-    async ListWarehouse(filter:any, perPage:number, page: number){
-       
-        return this.model.ListWarehouse(filter, perPage, page);
+    async GetAllWarehouse(){
+        return this.model.GetAllWarehouse();
     }
+
+    async exportWarehouse (fromDate:any, toDate:any){
+        return this.model.exportWarehouse(fromDate, toDate)
+    }
+
+    async ListWarehouse(perPage:number, page: number){
+       
+        return this.model.ListWarehouse(perPage, page);
+    }
+
+    async searchWarehouse(filter:any, perPage:number, page: number){
+       
+        return this.model.searchWarehouse(filter, perPage, page);
+    }
+
+   
+   
 
     async GetWarehouse (_id:string){
         const doc = await this.model.GetWarehouse(_id);
@@ -34,6 +50,20 @@ export class WarehouseController{
         return warehouse;
     }
 
+    async CreateManyWarehouse (params:any){
+        const now = dayjs();
+      const nowFormat = now.format('DD/MM/YYYY HH:mm:ss');
+        const warehouse = params.map((item:any)=>({
+            _id: WarehouseSchema.Generator.NewWarehouseId(),
+            producer_name: item['Tên nhà cung cấp'],
+            product_name: item['Tên hàng hóa'],
+            lot_number: item['Số lô'],
+            ctime: nowFormat,
+            utime: nowFormat
+        }))
+        await this.model.CreateManyWarehouse(warehouse);
+    }
+
     async UpdateWarehouse (_id:string, params:WarehouseSchema.UpdateWarehouseParams){
         const warehouse = {...params};
         const now = dayjs();
@@ -49,4 +79,5 @@ export class WarehouseController{
         await this.model.DeleteWarehouse(_id);
         return doc;
     }
+
 }

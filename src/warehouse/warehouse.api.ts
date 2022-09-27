@@ -1,35 +1,24 @@
+import { from } from 'form-data';
 import { WarehouseController } from './warehouse.controller';
 import * as express from 'express';
 import { WarehouseSchema } from './warehouse';
+import { Common } from '../common/common';
+import csvtojson from 'csvtojson';
+import { count } from 'console';
+
+import dayjs from 'dayjs';
 
 export function NewWarehouseAPI (warehouseController: WarehouseController){
     const router = express.Router();
 
     router.get('/list', async(req, res)=>{
-        let filter = {};
         const perPage = 10;
         const pages = req.query.page || 1;
-        if(req.query.product_name){
-            const product_name = req.query.product_name;
-            filter = {product_name};
-        }
-        if(req.query.producer_name){
-            const producer_name = req.query.producer_name;
-            filter = {producer_name};
-        }
-        if(req.query.lot_number){
-            const lot_number = req.query.lot_number;
-            filter = {lot_number};
-        }
-        if(req.query._id){
-            const _id = req.query._id;
-            filter = {_id};
-        }
-       
-    
-        const docs = await warehouseController.ListWarehouse(filter, perPage, +pages);
+        const docs = await warehouseController.ListWarehouse(perPage, +pages);
         res.json(docs);
     });
+
+ 
 
     router.post('/create', async(req, res)=>{
         const parmas : WarehouseSchema.CreateWarehouseParams = {
@@ -61,6 +50,54 @@ export function NewWarehouseAPI (warehouseController: WarehouseController){
         const doc = await warehouseController.DeleteWarehouse(req.params._id);
         res.json({status: 200, message: "Delete success!", data: doc});
     });
+
+    router.get('/search', async(req, res)=>{
+        let filter = {$regex:req.query.filter + '.*', $options: 'i'};
+        const perPage = 10;
+        const pages = req.query.page || 1;
+        const docs = await warehouseController.searchWarehouse(filter, perPage, +pages);
+        res.json(docs);
+    });
+
+    router.get('/export', async(req, res)=>{
+        const setHeaderColumns = [
+            {header:"ID", key:"_id"},
+            {header:"Tên nhà cung cấp", key:"producer_name"},
+            {header:"Tên hàng hóa", key:"product_name"},
+            {header:"Số lô", key:"lot_number"},
+        ];
+        let data = Array();
+        let reqToDate = '';
+        if(!req.query.toDate && req.query.fromDate){
+            reqToDate = String(req.query.fromDate);
+        }else if(req.query.toDate && req.query.fromDate){
+            reqToDate = String(req.query.toDate);
+        }
+        const toDate = Common.newToDate(reqToDate);
+       
+        if(!req.query.fromDate && !req.query.toDate){
+             data = await warehouseController.GetAllWarehouse();
+        }else if(req.query.fromDate && req.query.toDate){
+                data = await warehouseController.exportWarehouse(req.query.fromDate, toDate);
+        }else if(!req.query.toDate && req.query.fromDate){
+            data = await warehouseController.exportWarehouse(req.query.fromDate, toDate);
+        }   
+   return  Common.exportData(data, setHeaderColumns, res, 'Consignment');
+        
+    })
+
+    router.post('/import', Common.upload.single('File'), async(req, res)=>{
+        // const data = await csvtojson().fromFile('./src/public/' + req.file?.originalname);
+        const data = await Common.readingData(req.file?.originalname);
+        await warehouseController.CreateManyWarehouse(data).then(()=>{
+            res.send('Import Success')
+        }).catch((err)=>{
+            console.log(err);
+            res.send(err)
+        })
+        
+    });
+   
 
     return router;
 }

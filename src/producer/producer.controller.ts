@@ -7,8 +7,20 @@ export class ProducerController {
 
     async init(){}
 
-    async ListProducer (filter:any, perPage:number, page:number){
-        return this.model.ListProducer(filter, perPage, page);
+    async GetAllProducer () {
+        return this.model.GetAllProducer();
+    }
+
+    async exportProducer (fromDate:any, toDate:any){
+        return this.model.exportProducer(fromDate, toDate);
+    }
+
+    async ListProducer (perPage:number, page:number){
+        return this.model.ListProducer(perPage, page);
+    }
+
+    async searchProducer (filter:any, perPage:number, page:number){
+        return this.model.searchProducer(filter, perPage, page);
     }
 
     async GetProducer (_id :string){
@@ -33,6 +45,24 @@ export class ProducerController {
 
         await this.model.CreateProducer(producer);
         return producer;
+    }
+
+    async CreateManyProducer (params: any){
+        const now = dayjs();
+      
+        const nowFormat = now.format('DD/MM/YYYY HH:mm:ss');
+
+        const producer = params.map((item:any)=>({
+            _id: ProducerSchema.Generator.NewProducerId(),
+            producer_name: item['Tên nhà cung cấp'],
+            producer_address: item['Địa chỉ'],
+            producer_email: item['Email'],
+            producer_phone: item['SĐT'],
+            ctime: nowFormat,
+            utime: nowFormat
+        }))
+
+        await this.model.CreateManyProducer(producer);
     }
 
     async UpdateProducer (_id:string, params: ProducerSchema.UpdateProducerParams){

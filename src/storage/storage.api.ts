@@ -1,39 +1,14 @@
 import { StorageController } from './storage.controller';
 import * as express from 'express';
 import { StorageSchema } from './storage';
+import csvtojson from 'csvtojson';
+import { Common } from '../common/common';
 
 export function NewStorageAPI (storageController : StorageController) {
     const router = express.Router();
 
     router.get('/list', async(req, res)=>{
-        let filter = {};
-       
-        if(req.query.product_name){
-            const product_name = req.query.product_name;
-            filter = {product_name};
-        }
-        if(req.query.lot_number){
-            const lot_number = req.query.lot_number;
-            filter = {lot_number};
-        }
-        if(req.query.shelf_number){
-            const shelf_number = req.query.shelf_number;
-            filter = {shelf_number};
-        }
-        if(req.query.nsx){
-            const nsx = req.query.nsx;
-            filter = {nsx};
-        }
-        if(req.query.hsd){
-            const hsd = req.query.hsd;
-            filter = {hsd};
-        }
-        if(req.query._id){
-            const _id = req.query._id;
-            filter = {_id};
-        }
-       
-        const docs = await storageController.ListStorage(filter);
+        const docs = await storageController.ListStorage();
         res.json(docs);
     });
 
@@ -76,6 +51,45 @@ export function NewStorageAPI (storageController : StorageController) {
     router.delete('/delete/:_id', async(req, res) =>{
         const doc = await storageController.DeleteStorage(req.params._id);
         res.json({status: 200, message: 'Delete success', data: doc});
+    });
+
+    router.get('/search', async(req, res)=>{
+        let filter = {$regex: req.query.filter + '.*', $options:'i'};
+        const docs = await storageController.searchStorage(filter);
+        res.json(docs);
+    });
+
+    router.get('/export', async(req, res)=>{
+        const setHeaderColumns = [
+            {header:"ID", key:"_id"},
+            {header:"Tên hàng hóa", key:"product_name"},
+            {header:"Số lô", key:"lot_number"},
+            {header:"Số kệ ", key:"shelf_number"},
+            {header:"Loại", key:"type"},
+            {header:"Số lượng", key:"quantity"},
+            {header:"NSX", key:"nsx"},
+            {header:"HSD", key:"hsd"},
+        ];
+
+        let data = Array();
+        let reqToDate = '';
+        if(req.query.fromDate && !req.query.toDate){
+            reqToDate = String(req.query.fromDate);
+        }else if(req.query.fromDate && req.query.toDate){
+            reqToDate = String(req.query.toDate);
+        }
+
+        const toDate = Common.newToDate(reqToDate);
+
+        if(!req.query.fromDate && !req.query.toDate){
+            data = await storageController.GetAllStorage();
+       }else if(req.query.fromDate && req.query.toDate){
+               data = await storageController.exportStorage(req.query.fromDate, toDate);
+       }else if(!req.query.toDate && req.query.fromDate){
+           data = await storageController.exportStorage(req.query.fromDate, toDate);
+       }   
+
+        Common.exportData(data, setHeaderColumns, res, 'Storage');
     });
 
     return router;

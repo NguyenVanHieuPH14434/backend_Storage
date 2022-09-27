@@ -1,24 +1,16 @@
 import { ProducerController } from './producer.controller';
 import * as express from 'express';
 import { ProducerSchema } from './producer';
+import { Common } from '../common/common';
+import csvtojson from 'csvtojson';
 
 export function NewProducerAPI(producerController: ProducerController){
     const router = express.Router();
 
     router.get('/list', async(req, res)=>{
-        let filter = {};
-        const perPage = 10;
+        const perPage = 1000;
         const pages = req.query.page || 1;
-        if(req.query.producer_name){
-            const producer_name = req.query.producer_name;
-            filter = {producer_name};
-        }
-        if(req.query._id){
-            const _id = req.query._id;
-            filter = {_id};
-        }
-   
-        const docs = await producerController.ListProducer(filter, perPage, +pages);
+        const docs = await producerController.ListProducer(perPage, +pages);
         res.json(docs);
     });
 
@@ -53,6 +45,55 @@ export function NewProducerAPI(producerController: ProducerController){
     router.delete('/delete/:_id', async(req, res)=>{
         const doc = await producerController.DeleteProducer(req.params._id);
         res.json({status: 200, message: 'Delete success!', data: doc});
+    });
+
+    router.get('/search', async(req, res)=>{
+        let filter = {$regex:req.query.filter + '.*', $options:'i'};
+        const perPage = 10;
+        const pages = req.query.page || 1;
+        const docs = await producerController.searchProducer(filter, perPage, +pages);
+        res.json(docs);
+    });
+
+    router.post('/import',Common.upload.single('File'), async(req, res)=>{
+        // const data = await csvtojson().fromFile('./src/public/'+ req.file?.originalname);
+        const data = await Common.readingData(req.file?.originalname);
+        await producerController.CreateManyProducer(data).then(()=>{
+            res.send('Import Success');
+        }).catch((err)=>{
+            console.log(err);
+            res.send(err)
+            
+        })
+    });
+
+    router.get('/export', async(req, res)=>{
+        const  setHeaderColumns =[
+            {header:"ID", key:"_id"},
+            {header:"Tên nhà cung cấp", key:"producer_name"},
+            {header:"Địa chỉ", key:"producer_address"},
+            {header:"Email", key:"producer_email"},
+            {header:"SĐT", key:"producer_phone"},
+        ];
+
+        let data = Array();
+        let reqToDate = '';
+        if(!req.query.toDate && req.query.fromDate){
+            reqToDate = String(req.query.fromDate);
+        }else if(req.query.toDate && req.query.fromDate){
+            reqToDate = String(req.query.toDate);
+        }
+        const toDate = Common.newToDate(reqToDate);
+       
+        if(!req.query.fromDate && !req.query.toDate){
+             data = await producerController.GetAllProducer();
+        }else if(req.query.fromDate && req.query.toDate){
+                data = await producerController.exportProducer(req.query.fromDate, toDate);
+        }else if(!req.query.toDate && req.query.fromDate){
+            data = await producerController.exportProducer(req.query.fromDate, toDate);
+        }   
+
+        Common.exportData(data, setHeaderColumns, res, 'Producer');
     });
 
     return router;

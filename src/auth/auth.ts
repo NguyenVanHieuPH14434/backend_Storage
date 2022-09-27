@@ -3,8 +3,9 @@ import rand from "../lib/rand";
 export namespace AuthSchema {
 
     export enum Role {
-        ADMIN = 'admin', 
-        MANAGER = 'manager'
+        ADMIN = 'admin',
+        ACCOUNTANT = 'Kế toán',
+        STOCKER = 'Thủ kho'
     }
 
     export enum Gender {

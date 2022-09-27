@@ -14,6 +14,7 @@ import { NewProducerAPI } from './producer/producer.api';
 import { NewWarehouseAPI } from './warehouse/warehouse.api';
 import { NewStorageAPI } from './storage/storage.api';
 import { NewShelfAPI } from './shelf/shelf.api';
+import path from 'path';
 
 export async function main() {
 
@@ -54,6 +55,8 @@ app.disable("x-powered-by")
 app.get('/', (req, res)=>{
     res.send('â');
 })
+
+app.use(express.static(path.resolve(__dirname,'public')));
 
 app.use('/api/producer', NewProducerAPI(producerController));
 app.use('/api/consignment', NewWarehouseAPI(warehouseController));

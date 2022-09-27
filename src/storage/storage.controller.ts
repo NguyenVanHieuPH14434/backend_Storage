@@ -8,8 +8,20 @@ export class StorageController {
 
     async init() {}
 
-    async ListStorage (filter:any) {
-        return this.model.ListStorage(filter);
+    async GetAllStorage (){
+        return this.model.GetAllStorage();
+    }
+
+    async exportStorage (fromDate:any, toDate:any){
+        return this.model.exportStorage(fromDate, toDate);
+    }
+
+    async ListStorage () {
+        return this.model.ListStorage();
+    }
+
+    async searchStorage (filter:any) {
+        return this.model.searchStorage(filter);
     }
 
     async GetStorage (_id:string){
@@ -42,6 +54,7 @@ export class StorageController {
         await this.model.CreateStorage(storage);
         return storage;
     }
+
 
     async UpdateStorage (_id:string, params: StorageSchema.UpdateStorageParams){
         const now = dayjs();
